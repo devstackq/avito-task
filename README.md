@@ -84,12 +84,12 @@ POST: /v1/currency
 POST : /v1/user
 {name:"Lora", email:"user@mail.ru", password:"123user"}
 
-1.3 Проводить транзакции, поплнить, вычесть баланс по id пользователя
+1.3 Проводить транзакции, пополнить, вычесть баланс по id пользователя
 POST : /v1/billing/add/:{id}, body : {wallet_amount: 100.0}
 POST : /v1/billing/debit/:{id} body : {wallet_amount: 100.0
 
 1.4 Перевод другому пользователю, по id, нужно создать 2 пользователей
-POST : /v1/billing/transfer/:{id}; body : {receiverUserID : 2, wallet_amount: 100.0}
+POST : /v1/billing/transfer/:{id}; body : {receiver_id : 2, wallet_amount: 100.0}
 
 1.5 Проверка баланса по id
 POST: /v1/billing/balance/:{id}

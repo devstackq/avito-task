@@ -3,13 +3,14 @@ package model
 type Response struct {
 	Text    string `json:"text"`
 	Message string `json:"message"`
+	Data    interface{}
 }
 
 type User struct {
-	ID       int     `json:"id"`
-	Name     string  `json:"name"`
-	Email    string  `json:"email"`
-	Password string  `json:"password"`
-	UUID     string  `json:"uuid"`
-	Account  Account `json:"account"`
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	// UUID     string  `json:"uuid"`
+	Account Account `json:"account"`
 }

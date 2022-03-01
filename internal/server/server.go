@@ -78,9 +78,11 @@ func (a *App) setComponents() {
 	}
 
 	accountRepo := repository.NewAccountRepo(db)
+	currencyRepo := repository.NewCurrencyRepo(db)
+
 	userRepo := repository.NewUserService(db)
 
-	accountService := service.NewAccountService(accountRepo)
+	accountService := service.NewAccountService(accountRepo, currencyRepo)
 	userService := service.NewUserService(userRepo)
 
 	handler.SetEnpoints(apiVersion, accountService, userService)

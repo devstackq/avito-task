@@ -52,8 +52,7 @@ func CreateTables(db *sql.DB) error {
 		account_id SERIAL PRIMARY KEY,
 		uuid VARCHAR(200) NOT NULL,
 		balance DECIMAL,
-		currency_type INTEGER REFERENCES currency(currency_id),
-		UNIQUE(uuid)
+		currency_type INTEGER REFERENCES currency(currency_id)
 	);`)
 	if err != nil {
 		return err

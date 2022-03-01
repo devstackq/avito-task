@@ -15,9 +15,10 @@ func NewUserService(db *sql.DB) internal.UserRepoInterface {
 }
 func (ur *UserRepo) IsExistUser(id int) (uuid string, err error) {
 
-	query := `SELECT uuid FROM users left join account a on a.id = users.account_id where user_id=$1`
+	query := `SELECT uuid FROM users left join account a on a.account_id = users.account_id where user_id=$1`
 
 	err = ur.db.QueryRow(query, id).Scan(&uuid)
+
 	if err != nil {
 		return "", err
 	}

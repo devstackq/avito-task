@@ -23,18 +23,13 @@ func (ar *AccountRepo) CreateAccount(uuid string) (res int64, err error) {
 	if err != nil {
 		return 0, err
 	}
-	if err != nil {
-		return 0, err
-	}
 	return res, nil
 }
 
 func (ar *AccountRepo) Add(account *model.Account) error {
-	// select(balance where uuid=$1)
-	log.Println(account, 123)
-
-	query := "UPDATE account SET balance = balance + $1 WHERE id = $2"
-	_, err := ar.db.Exec(query, account.WalletAmount, account.UUID)
+	log.Print(account, "add")
+	query := "UPDATE account SET balance = balance + $1 WHERE uuid = $2 AND currency_type=$3"
+	_, err := ar.db.Exec(query, account.WalletAmount, account.UUID, account.CurrencyType)
 	if err != nil {
 		return nil
 	}
@@ -42,14 +37,26 @@ func (ar *AccountRepo) Add(account *model.Account) error {
 }
 
 //in further..
-// func (ar *AccountRepo) GetBalanceByUUID(uuid string) (int, error) {
-// 	query := `SELECT walletAmount FROM account where uuid = $1`
+//AddNewCurrency(uuid)
+
+func (ar *AccountRepo) CheckBalanceByUUID(uuid string) (amount float64, err error) {
+	query := `SELECT balance FROM account WHERE uuid = $1`
+	err = ar.db.QueryRow(query, uuid).Scan(&amount)
+	if err != nil {
+		return 0, err
+	}
+	return
+
+}
+func (ar *AccountRepo) Debit(account *model.Account) error {
+	query := "UPDATE account SET balance = balance - $1 WHERE uuid = $2 AND currency_type=$3"
+	_, err := ar.db.Exec(query, account.WalletAmount, account.UUID, account.CurrencyType)
+	if err != nil {
+		return nil
+	}
+	return nil
+}
+
+// func (ar *AccountRepo) Transfer() error {
+// 	return nil
 // }
-
-func (a *AccountRepo) Debit() error {
-	return nil
-}
-
-func (a *AccountRepo) Transfer() error {
-	return nil
-}

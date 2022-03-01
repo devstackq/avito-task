@@ -3,40 +3,74 @@ package service
 import (
 	"avito/internal"
 	"avito/internal/model"
+	"fmt"
+	"log"
 
 	"github.com/gofrs/uuid"
 )
 
 type AccountService struct {
-	accountRepo internal.AccountBalanceRepositoryInterface
+	accountRepo  internal.AccountBalanceRepositoryInterface
+	currencyRepo internal.CurrencyRepositoryInterface
 }
 
-func NewAccountService(repo internal.AccountBalanceRepositoryInterface) internal.AccountBalanceServiceInterface {
-	return &AccountService{accountRepo: repo}
+func NewAccountService(accountRepo internal.AccountBalanceRepositoryInterface, currencyRepo internal.CurrencyRepositoryInterface) internal.AccountBalanceServiceInterface {
+	return &AccountService{accountRepo: accountRepo,
+		currencyRepo: currencyRepo}
 }
 
-func (a *AccountService) Add(account *model.Account) error {
-	return a.accountRepo.Add(account)
+func (as *AccountService) CheckBalanceByUUID(uuid string) (float64, error) {
+	return as.accountRepo.CheckBalanceByUUID(uuid)
 }
 
-func (a *AccountService) Debit() error {
-	return nil
+func (as *AccountService) Add(account *model.Account) error {
+	var err error
+	account.CurrencyType, err = as.currencyRepo.GetCurrencyID(account.Currency)
+	log.Println(account, err)
+
+	return as.accountRepo.Add(account)
 }
 
-func (a *AccountService) CheckBalanceByID() (bool, error) {
-	return true, nil
+func (as *AccountService) Debit(account *model.Account) error {
+	account.CurrencyType, _ = as.currencyRepo.GetCurrencyID(account.Currency)
 
+	return as.accountRepo.Debit(account)
 }
 
-func (a *AccountService) UpdateBalanceByID() error {
-	return nil
-
-}
-func (a *AccountService) NewAccount() (int64, error) {
+func (as *AccountService) NewAccount() (int64, error) {
 	id, err := uuid.NewV4()
 	if err != nil {
 		return 0, err
 	}
-	// user.UUID = id.String()
-	return a.accountRepo.CreateAccount(id.String())
+	return as.accountRepo.CreateAccount(id.String())
+}
+
+func (as *AccountService) Transfer(sender model.Account, receiver model.Account) error {
+
+	var err error
+
+	sender.WalletAmount, err = as.accountRepo.CheckBalanceByUUID(sender.UUID)
+	if err != nil {
+		return err
+	}
+
+	//70; 70 - 10 ?
+	if sender.WalletAmount-sender.TransferAmount > 0 {
+		// GetCurrencyID(balanceSender.Currency)
+		sender.CurrencyType, err = as.currencyRepo.GetCurrencyID(sender.Currency)
+
+		sender.WalletAmount = sender.TransferAmount // 10
+		if err = as.Debit(&sender); err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("ne dostatochno deneg")
+	}
+
+	receiver.CurrencyType = sender.CurrencyType
+
+	if err = as.Add(&receiver); err != nil {
+		return err
+	}
+	return nil
 }
