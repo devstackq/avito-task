@@ -75,23 +75,26 @@
 
 
 
-1 Добавить новую валюту
+1 Добавить новую валюту; (для конвертации, еще  и usd)
 POST: /v1/currency
-, body : {currency_name : usd}
+body : {currency_name : rub}
 
 2 Добавить нового пользователя(автоматически открывается счет с валютой(рубль))
 POST : /v1/user
 {name:"Lora", email:"user@mail.ru", password:"123user"}
 
 Проводить транзакции, пополнить, вычесть баланс по id пользователя
-3.1 POST : /v1/billing/add/:{id}, body : {wallet_amount: 100.0}
-3.2 POST : /v1/billing/debit/:{id} body : {wallet_amount: 100.0}
+3.1 POST : /v1/account/add/:{id}, body : {wallet_amount: 100.0}
+3.2 POST : /v1/account/debit/:{id} body : {wallet_amount: 100.0}
 
 3.3 Перевод другому пользователю, по id, нужно создать 2 пользователей
-POST : /v1/billing/transfer/:{id}; body : {receiver_id : 2, wallet_amount: 100.0}
+POST : /v1/account/transfer/:{id}; body : {receiver_id : 2, wallet_amount: 100.0}
 
 3.4 Проверка баланса по id
-POST: /v1/billing/balance/:{id}, body {currency_type:1}
+POST: /v1/account/balance/:{id}, body {currency_type:1}
 
 3.5 Конвертация баланса rub-usd
-POST :/v1/billing/convert/currency=usd
+3.5.1 Вначале надо создать новую валюту для юзера
+POST :/v1/account/currency/:{user_id}
+а после произвести конвертацию
+POST :/v1/account/convert/:{currency}

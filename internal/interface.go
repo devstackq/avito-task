@@ -7,6 +7,8 @@ type AccountBalanceRepositoryInterface interface {
 	Debit(account *model.Account) error
 	CreateAccount(uuid string) (int64, error)
 	CheckBalance(uuid string, currencyType int) (float64, error)
+
+	AddCurrencyAccount(uuid string, currencyID int) error
 }
 
 type AccountBalanceServiceInterface interface {
@@ -16,6 +18,9 @@ type AccountBalanceServiceInterface interface {
 	NewAccount() (int64, error)
 
 	Transfer(sender model.Account, receiver model.Account) error
+	Convert(account *model.Account) error
+
+	AddCurrencyAccount(uuid, currencyName string) error
 }
 
 type UserServiceInterface interface {
@@ -29,6 +34,7 @@ type UserRepoInterface interface {
 
 type CurrencyServiceInterface interface {
 	Create(string) error
+	GetCurrencyID(string) (int, error)
 }
 type CurrencyRepositoryInterface interface {
 	GetCurrencyID(string) (int, error)

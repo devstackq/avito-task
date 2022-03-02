@@ -9,6 +9,9 @@ type CurrencyService struct {
 func (cr CurrencyService) Create(name string) error {
 	return cr.repo.Create(name)
 }
+func (cr CurrencyService) GetCurrencyID(name string) (int, error) {
+	return cr.repo.GetCurrencyID(name)
+}
 
 func NewCurrencyService(repo internal.CurrencyRepositoryInterface) internal.CurrencyServiceInterface {
 	return &CurrencyService{repo: repo}

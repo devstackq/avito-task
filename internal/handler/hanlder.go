@@ -10,6 +10,7 @@ type Handler struct {
 	accountService  internal.AccountBalanceServiceInterface
 	userService     internal.UserServiceInterface
 	currencyService internal.CurrencyServiceInterface
+	// cfg             config.Conf
 }
 
 func NewHandler(account internal.AccountBalanceServiceInterface, user internal.UserServiceInterface, currency internal.CurrencyServiceInterface) *Handler {
@@ -35,13 +36,15 @@ func SetEnpoints(group *gin.RouterGroup, account internal.AccountBalanceServiceI
 		currencyGroup.POST("/", h.CreateCurrency)
 	}
 
-	billingGroup := group.Group("/billing")
+	accountGroup := group.Group("/account")
 	{
-		billingGroup.POST("/add/:id", h.AddBalance)
-		billingGroup.POST("/debit/:id", h.DebitBalance)
-		billingGroup.POST("/transfer/:id", h.TransferBalance)
-		billingGroup.GET("/balance/:id", h.GetBalanceByID)
-		// billingGroup.POST("/:currency", h.Convert) //convert
+		accountGroup.POST("/add/:id", h.AddBalance)
+		accountGroup.POST("/debit/:id", h.DebitBalance)
+		accountGroup.POST("/transfer/:id", h.TransferBalance)
+		accountGroup.GET("/balance/:id", h.GetBalanceByID)
+
+		accountGroup.POST("/convert/:currency", h.Convert)            //convert rub  to usd
+		accountGroup.POST("/currency/:user_id", h.AddCurrencyAccount) //create new currency to user
 
 		// billing.POST("/history/:id", h.GetHistoryTransaction)
 	}

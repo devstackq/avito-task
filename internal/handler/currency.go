@@ -18,11 +18,7 @@ func (h *Handler) CreateCurrency(c *gin.Context) {
 		repsonseWithStatus(c, http.StatusBadRequest, nil, "Error", err.Error())
 		return
 	}
-	err = account.Validation()
-	if err != nil {
-		repsonseWithStatus(c, http.StatusBadRequest, nil, "Error", err.Error())
-		return
-	}
+
 	err = h.currencyService.Create(account.Currency)
 	if err != nil {
 		repsonseWithStatus(c, http.StatusInternalServerError, nil, "Error", err.Error())

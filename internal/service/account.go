@@ -4,6 +4,7 @@ import (
 	"avito/internal"
 	"avito/internal/model"
 	"fmt"
+	"log"
 
 	"github.com/gofrs/uuid"
 )
@@ -18,6 +19,41 @@ func NewAccountService(accountRepo internal.AccountBalanceRepositoryInterface, c
 		currencyRepo: currencyRepo}
 }
 
+func (as *AccountService) AddCurrencyAccount(uuid, currencyName string) error {
+	id, err := as.currencyRepo.GetCurrencyID(currencyName)
+	if err != nil {
+		return err
+	}
+	return as.accountRepo.AddCurrencyAccount(uuid, id)
+}
+
+func (as *AccountService) Convert(acc *model.Account) (err error) {
+
+	acc.CurrencyType, err = as.currencyRepo.GetCurrencyID(acc.Currency)
+	if err != nil {
+		return err
+	}
+	amount, err := as.CheckBalance(acc.UUID, acc.CurrencyType)
+	if err != nil {
+		return err
+	}
+	log.Print(amount, acc.CurrencyType, 212)
+
+	acc.WalletAmount = amount //all balance, with rub - debit
+
+	if err = as.Debit(acc); err != nil {
+		return err
+	}
+	acc.WalletAmount = acc.ConvertedAmount
+	acc.Currency = acc.ConvertCurrency
+
+	if err = as.Add(acc); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (as *AccountService) CheckBalance(uuid string, currencyType int) (float64, error) {
 	return as.accountRepo.CheckBalance(uuid, currencyType)
 }
@@ -27,6 +63,7 @@ func (as *AccountService) Add(account *model.Account) (err error) {
 	if err != nil {
 		return err
 	}
+	// if account.WalletAmount > 0 {
 	return as.accountRepo.Add(account)
 }
 
@@ -39,7 +76,8 @@ func (as *AccountService) Debit(account *model.Account) (err error) {
 	if err != nil {
 		return err
 	}
-	if balanceAmount-account.WalletAmount < 1 {
+
+	if balanceAmount-account.WalletAmount < 0 {
 		return fmt.Errorf("nedostatochno sredstv")
 	}
 	return as.accountRepo.Debit(account)
