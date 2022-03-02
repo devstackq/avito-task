@@ -7,20 +7,22 @@ import (
 )
 
 type Handler struct {
-	accountService internal.AccountBalanceServiceInterface
-	userService    internal.UserServiceInterface
+	accountService  internal.AccountBalanceServiceInterface
+	userService     internal.UserServiceInterface
+	currencyService internal.CurrencyServiceInterface
 }
 
-func NewHandler(account internal.AccountBalanceServiceInterface, user internal.UserServiceInterface) *Handler {
+func NewHandler(account internal.AccountBalanceServiceInterface, user internal.UserServiceInterface, currency internal.CurrencyServiceInterface) *Handler {
 	return &Handler{
-		accountService: account,
-		userService:    user,
+		accountService:  account,
+		userService:     user,
+		currencyService: currency,
 	}
 }
 
-func SetEnpoints(group *gin.RouterGroup, account internal.AccountBalanceServiceInterface, user internal.UserServiceInterface) {
+func SetEnpoints(group *gin.RouterGroup, account internal.AccountBalanceServiceInterface, user internal.UserServiceInterface, currency internal.CurrencyServiceInterface) {
 
-	h := NewHandler(account, user)
+	h := NewHandler(account, user, currency)
 
 	userGroup := group.Group("/user")
 	{
@@ -42,7 +44,6 @@ func SetEnpoints(group *gin.RouterGroup, account internal.AccountBalanceServiceI
 
 		billingGroup.POST("/:currency", h.Convert) //convert
 
-		//todo:
 		// billing.POST("/history/:id", h.GetHistoryTransaction)
 	}
 }

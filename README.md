@@ -75,24 +75,23 @@
 
 
 
-1. go run main.go
-1.1 Добавить новую валюту
+1 Добавить новую валюту
 POST: /v1/currency
-{name:"rub"}
+, body : {currency_name : usd}
 
-1.2 Добавить нового пользователя(автоматически открывается счет с валютой(рубль))
+2 Добавить нового пользователя(автоматически открывается счет с валютой(рубль))
 POST : /v1/user
 {name:"Lora", email:"user@mail.ru", password:"123user"}
 
-1.3 Проводить транзакции, пополнить, вычесть баланс по id пользователя
-POST : /v1/billing/add/:{id}, body : {wallet_amount: 100.0}
-POST : /v1/billing/debit/:{id} body : {wallet_amount: 100.0
+Проводить транзакции, пополнить, вычесть баланс по id пользователя
+3.1 POST : /v1/billing/add/:{id}, body : {wallet_amount: 100.0}
+3.2 POST : /v1/billing/debit/:{id} body : {wallet_amount: 100.0}
 
-1.4 Перевод другому пользователю, по id, нужно создать 2 пользователей
+3.3 Перевод другому пользователю, по id, нужно создать 2 пользователей
 POST : /v1/billing/transfer/:{id}; body : {receiver_id : 2, wallet_amount: 100.0}
 
-1.5 Проверка баланса по id
-POST: /v1/billing/balance/:{id}
+3.4 Проверка баланса по id
+POST: /v1/billing/balance/:{id}, body {currency_type:1}
 
-1.6 История транзакций пользователя по ID
-POST: /v1/billing/history/:{id}
+3.5 Конвертация баланса rub-usd
+POST :/v1/billing/convert/currency=usd

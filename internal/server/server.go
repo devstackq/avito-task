@@ -85,5 +85,7 @@ func (a *App) setComponents() {
 	accountService := service.NewAccountService(accountRepo, currencyRepo)
 	userService := service.NewUserService(userRepo)
 
-	handler.SetEnpoints(apiVersion, accountService, userService)
+	currencyService := service.NewCurrencyService(currencyRepo)
+
+	handler.SetEnpoints(apiVersion, accountService, userService, currencyService)
 }

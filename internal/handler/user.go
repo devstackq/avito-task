@@ -2,7 +2,6 @@ package handler
 
 import (
 	"avito/internal/model"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,20 +12,13 @@ func (h *Handler) Register(c *gin.Context) {
 	var user model.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		//todo : func helper
-		c.JSON(http.StatusBadRequest, &model.Response{
-			Text:    "error : ",
-			Message: fmt.Sprint("bad request: user: ", err.Error()),
-		})
+		repsonseWithStatus(c, http.StatusBadRequest, nil, "Success", "user created")
 		return
 	}
 
 	lidAccount, err := h.accountService.NewAccount()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &model.Response{
-			Text:    "error : ",
-			Message: fmt.Sprint("can't create new account: ", err.Error()),
-		})
+		repsonseWithStatus(c, http.StatusInternalServerError, nil, "Error", err.Error())
 		return
 	}
 
@@ -34,15 +26,8 @@ func (h *Handler) Register(c *gin.Context) {
 
 	lidUser, err := h.userService.CreateUser(&user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &model.Response{
-			Text: "E	rror",
-			Message: fmt.Sprint("can't create new user: ", err.Error()),
-		})
+		repsonseWithStatus(c, http.StatusInternalServerError, nil, "Success", err.Error())
 		return
 	}
-
-	c.JSON(http.StatusOK, &model.Response{
-		Text:    "success: ",
-		Message: fmt.Sprint("create new user by id: ", lidUser),
-	})
+	repsonseWithStatus(c, http.StatusOK, lidUser, "Success", "user created")
 }

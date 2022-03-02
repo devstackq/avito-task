@@ -7,10 +7,9 @@ type Response struct {
 }
 
 type User struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	// UUID     string  `json:"uuid"`
-	Account Account `json:"account"`
+	ID       int     `json:"id"`
+	Name     string  `json:"name"`
+	Email    string  `json:"email"`
+	Password string  `json:"password"`
+	Account  Account `json:"account"`
 }
