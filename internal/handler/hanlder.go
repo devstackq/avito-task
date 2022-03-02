@@ -41,8 +41,7 @@ func SetEnpoints(group *gin.RouterGroup, account internal.AccountBalanceServiceI
 		billingGroup.POST("/debit/:id", h.DebitBalance)
 		billingGroup.POST("/transfer/:id", h.TransferBalance)
 		billingGroup.GET("/balance/:id", h.GetBalanceByID)
-
-		billingGroup.POST("/:currency", h.Convert) //convert
+		// billingGroup.POST("/:currency", h.Convert) //convert
 
 		// billing.POST("/history/:id", h.GetHistoryTransaction)
 	}
